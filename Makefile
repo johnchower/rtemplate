@@ -96,4 +96,4 @@ clean_reserve:
 	$(call clean_directory,cache_reserve) ; \
 	$(call clean_directory,data_reserve)
 
-.PHONY: clean
+.PHONY: clean clean_reserve
