@@ -25,6 +25,7 @@ link_files = if [ -n "$(filter $(1)%.$(3),$^)" ]; \
 		--filenames $(filter $(1)%.$(3),$^) ; \
 	     fi 
 
+
 # Remove all files in a given directory, including symlinks, excluding dotfiles
 # Arguments 
 # $(1) The directory path, relative to the location of this Makefile
@@ -32,12 +33,12 @@ define clean_directory
 find -L ./$(1) -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 endef
 
+
 # ##############
 # Canned recipes
 # ##############
 
 # Link a set of files from input_data into data_reserve/
-
 define link_input_data
 $(call link_files,input_data,data_reserve,csv)
 endef
@@ -61,7 +62,7 @@ define update_cache
 $(call link_files,munge_reserve,munge,r)
 $(call link_files,data_reserve,data,csv)
 $(call link_files,cache_reserve,cache,RData)
-Rscript misc/update_cache.r --cache_loading $(cache_loading) --munging $(munging) --outname $(outname)
+Rscript misc/update_cache.r --outname $(outname)
 cp cache/* cache_reserve/
 find ./munge -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 find ./data -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
