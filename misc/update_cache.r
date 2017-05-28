@@ -8,7 +8,7 @@ option_list <- list(
 , optparse::make_option(
     "--munging"
   , type = "logical"
-  , default = F
+  , default = T
   , help = "run munging scripts?"
   )
 , optparse::make_option(
