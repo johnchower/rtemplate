@@ -41,15 +41,15 @@ $(call link_files,inputData,dataReserve,csv)
 endef
 
 # Run a query and save the result as a csv file in dataReserve
-# TODO Turn into a 'single line' definition, like link_files
 # Arguments
 # $(1) 	dbname - character
 # 		The name of the database to run queries against
-define run_query
-$(call link_files,queriesReserve,queries,sql)
-Rscript misc/run_queries.r --auth_file_location $(auth_file) --dbname $(1) --projname $(projname)
-find ./queries -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
-endef
+run_query = $(call link_files,queriesReserve,queries,sql) ; \
+	    Rscript misc/run_queries.r \
+	    	--auth_file_location $(auth_file) \
+		--dbname $(1) \
+		--projname $(projname) ; \
+		$(call clean_directory,queries)
 
 # Create a new cached dataset in cacheReserve/
 # Arguments
@@ -68,6 +68,9 @@ endef
 # ##############
 # Actual Recipes
 # ##############
+
+dataReserve/test1.csv: queriesReserve/test1.sql
+	$(call run_query,insightsbeta)
 
 mkfileViz.png: makefile2dot.py Makefile
 	python makefile2dot.py <Makefile |dot -Tpng > mkfileViz.png
