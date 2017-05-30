@@ -30,17 +30,13 @@ link_files = if [ -n "$(filter $(1)%.$(3),$^)" ]; \
 # Arguments 
 # $(1) The directory path, relative to the location of this Makefile
 # TODO Add the ability to remove broken symlinks
-define clean_directory
-find -L ./$(1) -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
-endef
+clean_directory = find -L ./$(1) -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 
 
 # Link a set of files from inputData into dataReserve/
-define link_inputData
-$(call link_files,inputData,dataReserve,csv)
-endef
+link_inputData = $(call link_files,inputData,dataReserve,csv)
 
-# Run a query and save the result as a csv file in dataReserve
+# Run a set of queries and save the results as csv files in dataReserve
 # Arguments
 # $(1) 	dbname - character
 # 		The name of the database to run queries against
@@ -68,9 +64,6 @@ endef
 # ##############
 # Actual Recipes
 # ##############
-
-dataReserve/test1.csv: queriesReserve/test1.sql
-	$(call run_query,insightsbeta)
 
 mkfileViz.png: makefile2dot.py Makefile
 	python makefile2dot.py <Makefile |dot -Tpng > mkfileViz.png
