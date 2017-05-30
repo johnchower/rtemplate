@@ -52,10 +52,6 @@ find ./queries -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 endef
 
 # Create a new cached dataset in cacheReserve/
-# TODO Currently munge files reqire you to hardcode in the value of 
-# 'outname'. Make it so that you don't have to do that. (e.g., munge 
-# scripts always output an object of the same name, like munge_out.
-# update_cache.r assigns that to the value of outname before caching.
 # Arguments
 # $(1)  Name of dataset to create (without .RData extension)
 define update_cache
