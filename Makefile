@@ -84,16 +84,16 @@ cleanReserve: clean
 # ##############
 # Examples
 # ##############
- 
+
 # cacheReserve/m1.user_pa_cat_count.RData: mungeReserve/m1.r dataReserve/user_pa_facts.csv cacheReserve/m0.pa_cat.RData
 # 	$(call update_cache,m1.user_pa_cat_count)
- 
- 
+
+
 # dataReserve/user_pa_facts.csv: queriesReserve/user_pa_facts.sql
 # 	$(call run_query,testDB)
- 
+
 # cacheReserve/m0.pa_cat.RData: dataReserve/pa_cat.csv mungeReserve/m0.r
 # 	$(call update_cache,m0.pa_cat)
- 
+
 # dataReserve/pa_cat.csv: inputData/pa_cat.csv
 # 	$(link_inputData)
