@@ -2,7 +2,7 @@
 # (misc/loop_link.r depends on it) 
 
 # Preamble. Define variables and default goal (what runs when you say 'make')
-auth_file := ~/.auth/authenticate # Text file containing database credentials
+auth_file := ~/.auth/authenticate.csv # Text file containing database credentials
 sql_access := TRUE # Does the person running the code have access to the database?
 projname := rtemplate
 cache_loading := TRUE
@@ -35,39 +35,34 @@ find -L ./$(1) -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 endef
 
 
-# ##############
-# Canned recipes
-# ##############
-
 # Link a set of files from inputData into dataReserve/
 define link_inputData
 $(call link_files,inputData,dataReserve,csv)
 endef
 
 # Run a query and save the result as a csv file in dataReserve
-# Requires the following variables:
-# 	dbname - character
+# TODO Turn into a 'single line' definition, like link_files
+# Arguments
+# $(1) 	dbname - character
 # 		The name of the database to run queries against
 define run_query
 $(call link_files,queriesReserve,queries,sql)
-Rscript misc/run_queries.r --auth_file_location $(auth_file) --dbname $(dbname)
+Rscript misc/run_queries.r --auth_file_location $(auth_file) --dbname $(1) --projname $(projname)
 find ./queries -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 endef
 
 # Create a new cached dataset in cacheReserve/
-# Reqires the following variables:
-# 	cache_loading - logical
-# 	munging - logial
-# 	outname - character
+# Arguments
+# $(1)  Name of dataset to create (without .RData extension)
 define update_cache
 $(call link_files,mungeReserve,munge,r)
 $(call link_files,dataReserve,data,csv)
 $(call link_files,cacheReserve,cache,RData)
-Rscript misc/update_cache.r --outname $(outname)
-cp cache/* cacheReserve/
-find ./munge -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
-find ./data -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
-find ./cache -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
+Rscript misc/update_cache.r --outname $(1)
+mv cache/$(1).RData cacheReserve/
+$(call clean_directory,munge)
+$(call clean_directory,data)
+$(call clean_directory,cache)
 endef
 
 
@@ -75,9 +70,15 @@ endef
 # Actual Recipes
 # ##############
 
-outname := m0.pa_cat
+cacheReserve/m1.user_pa_cat_count.RData: mungeReserve/m1.r dataReserve/user_pa_facts.csv cacheReserve/m0.pa_cat.RData
+	$(call update_cache,m1.user_pa_cat_count)
+
+
+dataReserve/user_pa_facts.csv: queriesReserve/user_pa_facts.sql
+	$(call run_query,testDB)
+
 cacheReserve/m0.pa_cat.RData: dataReserve/pa_cat.csv mungeReserve/m0.r
-	$(update_cache)
+	$(call update_cache,m0.pa_cat)
 
 dataReserve/pa_cat.csv: inputData/pa_cat.csv
 	$(link_inputData)
