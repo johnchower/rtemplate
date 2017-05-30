@@ -27,4 +27,9 @@ ProjectTemplate::load.project(
   )
 )
 
+assign(
+  opt$outname
+, munge_out
+)
+
 ProjectTemplate::cache(opt$outname)
