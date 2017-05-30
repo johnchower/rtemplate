@@ -52,6 +52,10 @@ find ./queries -type f \( ! -iname ".*" \) -exec /bin/rm {} \;
 endef
 
 # Create a new cached dataset in cacheReserve/
+# TODO Currently munge files reqire you to hardcode in the value of 
+# 'outname'. Make it so that you don't have to do that. (e.g., munge 
+# scripts always output an object of the same name, like munge_out.
+# update_cache.r assigns that to the value of outname before caching.
 # Arguments
 # $(1)  Name of dataset to create (without .RData extension)
 define update_cache
@@ -65,24 +69,9 @@ $(call clean_directory,data)
 $(call clean_directory,cache)
 endef
 
-
 # ##############
 # Actual Recipes
 # ##############
-
-cacheReserve/m1.user_pa_cat_count.RData: mungeReserve/m1.r dataReserve/user_pa_facts.csv cacheReserve/m0.pa_cat.RData
-	$(call update_cache,m1.user_pa_cat_count)
-
-
-dataReserve/user_pa_facts.csv: queriesReserve/user_pa_facts.sql
-	$(call run_query,testDB)
-
-cacheReserve/m0.pa_cat.RData: dataReserve/pa_cat.csv mungeReserve/m0.r
-	$(call update_cache,m0.pa_cat)
-
-dataReserve/pa_cat.csv: inputData/pa_cat.csv
-	$(link_inputData)
-
 
 mkfileViz.png: makefile2dot.py Makefile
 	python makefile2dot.py <Makefile |dot -Tpng > mkfileViz.png
@@ -99,3 +88,20 @@ cleanReserve: clean
 	$(call clean_directory,dataReserve)
 
 .PHONY: clean cleanReserve
+
+# ##############
+# Examples
+# ##############
+ 
+# cacheReserve/m1.user_pa_cat_count.RData: mungeReserve/m1.r dataReserve/user_pa_facts.csv cacheReserve/m0.pa_cat.RData
+# 	$(call update_cache,m1.user_pa_cat_count)
+ 
+ 
+# dataReserve/user_pa_facts.csv: queriesReserve/user_pa_facts.sql
+# 	$(call run_query,testDB)
+ 
+# cacheReserve/m0.pa_cat.RData: dataReserve/pa_cat.csv mungeReserve/m0.r
+# 	$(call update_cache,m0.pa_cat)
+ 
+# dataReserve/pa_cat.csv: inputData/pa_cat.csv
+# 	$(link_inputData)
