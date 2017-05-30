@@ -7,31 +7,47 @@ ProjectTemplate::load.project(
   )
 )
 
-proj_root <- rprojroot::find_root(
-  rprojroot::has_dirname("nav")
-)
+if (!interactive()){
+  option_list <- list(
+    optparse::make_option(
+      "--auth_file_location"
+    , type = "character"
+    , default = ""
+    , help = "Path to auth file containing database credentials"
+    )
+  , optparse::make_option(
+      "--dbname"
+    , type = "character"
+    , default = "insightsbeta"
+    , help = "Name of database to run query against.
+        Currently supports 'insightsbeta' and 'polymer_production'"
+    )
+  , optparse::make_option(
+      "--projname"
+    , type = "character"
+    , default = "rtemplate"
+    , help = "Name of root directory of project"
+    )
+  )
+  opt <- optparse::parse_args(optparse::OptionParser(option_list = option_list))
 
-option_list <- list(
-  optparse::make_option(
-    "--auth_file_location"
-  , type = "character"
-  , default = ""
-  , help = "Path to auth file containing database credentials"
-  )
-, optparse::make_option(
-    "--dbname"
-  , type = "character"
-  , default = "insightsbeta"
-  , help = "Name of database to run query against.
-      Currently supports 'insightsbeta' and 'polymer_production'"
-  )
+  auth_file_location <- opt$auth_file_location
+  projname <- opt$projname
+  dbname <- opt$dbname
+} else {
+  auth_file_location <- "~/.auth/authenticate.csv"
+  projname <- "rtemplate"
+  dbname <- "testDB"
+}
+
+proj_root <- rprojroot::find_root(
+  rprojroot::has_dirname(projname)
 )
-opt <- optparse::parse_args(optparse::OptionParser(option_list = option_list))
 
 csv_directory <- paste0(
   proj_root
   , "/"
-  , "data_reserve"
+  , "dataReserve"
   , "/"
 )
 query_directory <- paste0(
@@ -40,35 +56,37 @@ query_directory <- paste0(
   , "queries"
   , "/"
 )
-if (interactive()){
-  auth_file_loc <- "~/.auth/authenticate"
+
+auth <- read.csv(auth_file_location, stringsAsFactors = F)
+
+if (!(dbname %in% auth$dbname)){
+  stop(paste0(
+    "Supplied dbname doesn't exist in "
+  , auth_file_location
+  ))
 } else {
-  auth_file_loc <- opt$auth_file_location
+  auth <- unlist( auth[auth$dbname == dbname,] )
 }
 
-auth <- readLines(auth_file_loc)
-
-if (opt$dbname == "insightsbeta"){
-  redshift_connection <- list(
-    con = RPostgreSQL::dbConnect(
-      drv = DBI::dbDriver("PostgreSQL")
-    , dbname = auth[9]
-    , host = auth[10]
-    , port = auth[11]
-    , user = auth[12]
-    , password = auth[13]
+if (auth[["type"]] == "SQLite"){
+  library(RSQLite)
+  db_connection <- list(
+    con = RSQLite::dbConnect(
+      drv = RSQLite::SQLite()
+    , auth[["location"]]
     )
-  , drv = DBI::dbDriver("PostgreSQL")
+  , drv = RSQLite::SQLite()
   )
-} else if (opt$dbname == "polymer_production"){
-  redshift_connection <- list(
+} else if (auth[["type"]] == "PostgreSQL"){
+  library(RPostgreSQL)
+  db_connection <- list(
     con = RPostgreSQL::dbConnect(
       drv = DBI::dbDriver("PostgreSQL")
-    , dbname = auth[4]
-    , host = auth[5]
-    , port = auth[6]
-    , user = auth[7]
-    , password = auth[8]
+    , dbname = auth[["dbname"]]
+    , host = auth[["host"]]
+    , port = auth[["port"]]
+    , user = auth[["user"]]
+    , password = auth[["password"]]
     )
   , drv = DBI::dbDriver("PostgreSQL")
   )
@@ -89,22 +107,19 @@ query_list_names <- dir(query_directory) %>% {
         gsub(pattern = ".sql", replacement = "", x = .)
     }
 
-queries_to_run <- list()
-for (i in 1:length(query_list)){
-    new_entry <- list(query_name = query_list_names[i]
-                      , query = query_list[[i]])
-    queries_to_run[[length(queries_to_run) + 1]] <- new_entry
-}
-
-query_results <- glootility::run_query_list(
-  queries_to_run
-, connection = redshift_connection$con
+result_list <- lapply(
+  query_list
+, function(q) dbGetQuery(
+    conn = db_connection$con
+  , statement = q
+  )
 )
+names(result_list) <- query_list_names
 
-query_results %>%
+result_list %>%
   names %>%
   lapply(function(name) {
-    result_df <- query_results[[name]]
+    result_df <- result_list[[name]]
     out_file <- paste0(csv_directory, name, ".csv")
     write.csv(
       result_df
