@@ -22,7 +22,7 @@ link_files = if [ -n "$(filter $(1)%.$(3),$^)" ]; \
 		--projname $(projname) \
 		--sourcedir $(1) \
 		--targetdir $(2) \
-		--filenames $(filter $(1)%.$(3),$^) ; \
+		--filenames '$(filter $(1)%.$(3),$^)' ; \
 	     fi 
 
 
