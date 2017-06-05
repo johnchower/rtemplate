@@ -30,7 +30,6 @@ if (!interactive()){
     )
   )
   opt <- optparse::parse_args(optparse::OptionParser(option_list = option_list))
-
   auth_file_location <- opt$auth_file_location
   projname <- opt$projname
   dbname <- opt$dbname
