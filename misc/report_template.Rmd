@@ -1,0 +1,52 @@
+---
+title: "Test Report"
+subtitle: "An implementation in R Markdown"
+author: "JJ Allaire and Yihui Xie"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_html: default
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+bibliography: skeleton.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+ProjectTemplate::load.project()
+```
+
+```{r define, include = FALSE}
+x <- "hello" %>% paste("world", sep = ", ")
+```
+
+This is a test report. You should see the text "hello, world" in the next
+sentence. `r x`.
+
+You should also see a bar graph and a scatter plot below. (do you?)
+
+```{r plots}
+testdata %>%
+  {.$x} %>%
+  hist
+
+m0.doubled %>%
+  ggplot(aes(x, y)) +
+  geom_point()
+```
+
+Report template stuff
+
+# Why (purpose and motivation. Original ask)
+
+# Summary of results (short answer to original ask)
+
+# Detail (Actual figures and charts. Interpretation, insights etc.)
+
+# References 
+## (Any academic papers citing statistical methods or industry standards used
+
+# Code link
