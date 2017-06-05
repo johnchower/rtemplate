@@ -16,4 +16,7 @@ cleanReserve: clean
 	$(call clean_directory,cacheReserve) ; \
 	$(call clean_directory,dataReserve)
 
+reports/report_template.html: misc/report_template.Rmd
+	$(call knit_report)
+
 .PHONY: clean cleanReserve
