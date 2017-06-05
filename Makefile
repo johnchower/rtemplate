@@ -15,9 +15,7 @@ munging := TRUE
 # ############
 # Recipes
 # ############
-cacheReserve/m0.doubled.RData: mungeReserve/m0.r dataReserve/testdata.csv
-	$(call update_cache,m0.doubled)
-	
+
 # ##############
 # Examples
 # ##############
