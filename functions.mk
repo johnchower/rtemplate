@@ -56,6 +56,7 @@ knit_report = $(call link_files,dataReserve,data,csv) ; \
 	$(call link_files,cacheReserve,cache,RData) ; \
 	Rscript ./misc/knit_report.r \
 		--markdownpath $(filter %.Rmd,$^) \
+		--targetpath $@ \
 		--projname $(projname) ; \
 	$(call clean_directory,cache) ; \
 	$(call clean_directory,data)

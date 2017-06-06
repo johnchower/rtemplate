@@ -13,13 +13,22 @@ if (!interactive()){
     , default = "rtemplate"
     , help = "Name of root directory of project"
     )
+  , optparse::make_option(
+      "--targetpath"
+    , type = "character"
+    , default = "html"
+    , help = "Path of the target file, with extension, relative to 
+        project root directory"
+    )
   )
   opt <- optparse::parse_args(optparse::OptionParser(option_list = option_list))
   projname <- opt$projname
   markdownpath <- opt$markdownpath
+  targetpath <- opt$targetpath
 } else {
   projname <- "rtemplate"
   markdownpath <- "src/report.Rmd"
+  targetpath <- "reports/report.html"
 }
 
 proj_root <- rprojroot::find_root(
@@ -45,4 +54,15 @@ ezknitr::ezknit(
 , out_dir = "reports"
 , fig_dir = paste0("figs_", reportname) 
 , keep_md = FALSE
+, verbose = T
+, params = list(proj_root = proj_root)
 )
+
+if (str_detect(string = targetpath, pattern = ".pdf")){
+  system(paste0(
+    "pandoc -s "
+  , str_replace(targetpath, ".pdf", ".html") 
+  , " -o "
+  , targetpath
+  ))
+}
