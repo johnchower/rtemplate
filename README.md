@@ -1,39 +1,69 @@
+
+[projtemp]: http://projecttemplate.net/
+
 # rtemplate
 
-Welcome to ProjectTemplate!
+## Introduction
+This is a generic repository contianing the skeleton of every custom analytics
+report that we'll be doing at Gloo.
 
-This file introduces you to ProjectTemplate, but you should eventually replace
-the contents of this file with an introduction to your project. People who
-work with your data in the future will thank you for it, including your future
-self.
+It's structure is based off of the ProjectTemplate structure.
+[ProjectTemplate][projtemp] is an R package designed to provide a consistent
+structure to R analyses. It's aim is to "automate the boring stuff" such as
+directory structure, data loading, and munging. Though we agreed with the
+philosophy of ProjectTemplate, and found the tools it provides useful, we found
+it lacking in a couple of key ways. This repository was created to address
+those shortcomings.
 
-ProjectTemplate is an R package that helps you organize your statistical
-analysis projects. Since you're reading this file, we'll assume that you've
-already called `create.project()` to set up this project and all of its
-contents.
+The primary shortcoming we sought to fix was that ProjectTemplate is not smart
+about which data it loads and when. Throughout the course of an analysis,
+certain datasets become obsolete, or no longer needed. ProjectTemplate's
+solution of caching these datasets in a designated directory is good, but the
+behavior of loading data from cache leaves much to be desired. Essentially,
+it's all-or-nothing. You either load all of the cached data, or none of it. We
+sought a solution where each R script loads only those datasets it needs. Of
+course, we could write boilerplate code at the beginning of each script to do
+this, but this would defeat one of the main reasons we started 
+using ProjectTemplate in the first place.
 
-To load your new project, you'll first need to `setwd()` into the directory
-where this README file is located. Then you need to run the following two
-lines of R code:
+The solution to this was to create "Reserve" directories where data, cached
+data, and munge scripts wait dormant. When we need a dataset, we symlink it
+from dataReserve into data, and then ProjectTemplate will take care of the
+loading for us. The naming convention for these directories is to tack a
+"Reserve" on the end of the ProjectTemplate directory names. So, for example,
+cacheReserve/ links to cache/. 
 
-	library('ProjectTemplate')
-	load.project()
+A second feature we wanted to add on to Project Template is the ability to use
+it gracefully with a Makefile. This brought us the way out. If the Make recipe
+can read the prerequisites, it can pass those to a script that can link the
+prerequisites into the corresponding ProjectTemplate directories.
 
-After you enter the second line of code, you'll see a series of automated
-messages as ProjectTemplate goes about doing its work. This work involves:
-* Reading in the global configuration file contained in `config`.
-* Loading any R packages you listed in he configuration file.
-* Reading in any datasets stored in `data` or `cache`.
-* Preprocessing your data using the files in the `munge` directory.
+## Getting Started
 
-Once that's done, you can execute any code you'd like. For every analysis
-you create, we'd recommend putting a separate file in the `src` directory.
-If the files start with the two lines mentioned above:
+Download this repository and rename the top level directory to the name of your 
+project. Also change the "projname" variable at the top of Makefile:
 
-	library('ProjectTemplate')
-	load.project()
+## Directory Structure
 
-You'll have access to all of your data, already fully preprocessed, and
-all of the libraries you want to use.
+The following directories are ProjectTemplate directories. See the
+[ProjectTemplate][projtemp] documentation to learn how they work.
 
-For more details about ProjectTemplate, see http://projecttemplate.net
+## Makefile Structure
+
+## R Style and Architecture
+
+## Boilerplate Recipes
+
+rtemplate provides a set of boilerplate recipes in boilerplate.mk that make
+working with stuff easier. For example, stuff.
+
+1.  `README.html` - Generates a Github-style preview of your README.md using
+    [grip](https://github.com/joeyespo/grip)
+2.  `mkfileViz.png` - Generates a visualization of your makefile using
+    [makefile2dot](https://github.com/vak/makefile2dot) 
+3.  `clean` - Removes all files (except .gitignore) from the data, queries,
+    munge, cache, and reports directory. Useful if you've linked files into
+    those directories that you don't need to load anymore.
+4.  `cleanReserve` - Removes all files (except .gitignore) from the dataReserve
+    and cacheReserve directories. Useful if you need to re-make any datasets
+    that you've generated.

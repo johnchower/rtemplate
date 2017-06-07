@@ -5,6 +5,9 @@
 mkfileViz.png: makefile2dot.py Makefile
 	python makefile2dot.py <Makefile |dot -Tpng > mkfileViz.png
 
+README.html: README.md
+	grip README.md --export README.html
+
 clean: 
 	$(call clean_directory,data) ; \
 	$(call clean_directory,queries) ; \
