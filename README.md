@@ -10,20 +10,20 @@ report that we'll be doing at Gloo.
 It's structure is based off of the ProjectTemplate structure.
 [ProjectTemplate][projtemp] is an R package designed to provide a consistent
 structure to R analyses. It's aim is to "automate the boring stuff" such as
-directory structure, data loading, and munging. Though we agreed with the
-philosophy of ProjectTemplate, and found the tools it provides useful, we found
+directory structure, data loading, and munging. Though I agreed with the
+philosophy of ProjectTemplate, and found the tools it provides useful, I found
 it lacking in a couple of key ways. This repository was created to address
 those shortcomings.
 
-The primary shortcoming we sought to fix was that ProjectTemplate is not smart
+The primary shortcoming I sought to fix was that ProjectTemplate is not smart
 about which data it loads and when. Throughout the course of an analysis,
 certain datasets become obsolete, or no longer needed. ProjectTemplate's
 solution of caching these datasets in a designated directory is good, but the
 behavior of loading data from cache leaves much to be desired. Essentially,
-it's all-or-nothing. You either load all of the cached data, or none of it. We
+it's all-or-nothing. You either load all of the cached data, or none of it. I
 sought a solution where each R script loads only those datasets it needs. Of
-course, we could write boilerplate code at the beginning of each script to do
-this, but this would defeat one of the main reasons we started 
+course, I could write boilerplate code at the beginning of each script to do
+this, but this would defeat one of the main reasons I started 
 using ProjectTemplate in the first place.
 
 The solution to this was to create "Reserve" directories where data, cached
@@ -33,7 +33,7 @@ loading for us. The naming convention for these directories is to tack a
 "Reserve" on the end of the ProjectTemplate directory names. So, for example,
 cacheReserve/ links to cache/. 
 
-A second feature we wanted to add on to Project Template is the ability to use
+A second feature I wanted to add on to Project Template is the ability to use
 it gracefully with a Makefile. This brought us the way out. If the Make recipe
 can read the prerequisites, it can pass those to a script that can link the
 prerequisites into the corresponding ProjectTemplate directories.
