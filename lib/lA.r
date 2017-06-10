@@ -37,6 +37,7 @@ lA.link_datasets0 <- function(
 , source_dir
 , proj_root
 ){
+  proj_root <- paste0("'", proj_root, "'")
   if (length(name_list > 0)){
     # Link datasets
     name_list %>%

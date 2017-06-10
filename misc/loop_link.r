@@ -6,6 +6,7 @@ ProjectTemplate::load.project(
   , load_libraries = T
   )
 )
+library(stringr)
 
 if (!interactive()){
   option_list <- list(
@@ -42,10 +43,10 @@ if (!interactive()){
   filenames <- opt$filenames
 } else {
   library(dplyr)
-  projname <- "rtemplate"
+  projname <- "invitation_effectiveness"
   targetdir <- "data"
-  sourcedir <- "data_reserve"
-  filenames <- "data_reserve/file1.csv data_reserve/file3.csv"
+  sourcedir <- "dataReserve"
+  filenames <- "dataReserve/file1.csv dataReserve/file3.csv"
 }
 
 proj_root <- rprojroot::find_root(
@@ -53,14 +54,18 @@ proj_root <- rprojroot::find_root(
 )
 
 targetdir <- paste0(
-  proj_root
+  "'"
+, proj_root
 , "/"
 , targetdir
+, "'"
 )
 sourcedir <- paste0(
-  proj_root
+  "'"
+, proj_root
 , "/"
 , sourcedir
+, "'"
 )
 
 # Relative path to source directory from target directory
