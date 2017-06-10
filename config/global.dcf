@@ -6,6 +6,6 @@ munging: TRUE
 logging: FALSE
 load_libraries: TRUE
 libraries: tidyverse, rprojroot
-as_factors: TRUE
+as_factors: FALSE
 data_tables: FALSE
 attach_internal_libraries: FALSE
