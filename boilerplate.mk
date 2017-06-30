@@ -15,8 +15,10 @@ clean:
 	$(call clean_directory,munge) ; \
 	$(call clean_directory,reports)
 
-cleanReserve: clean
-	$(call clean_directory,cacheReserve) ; \
+cleanCacheReserve: clean
+	$(call clean_directory,cacheReserve)
+
+cleanDataReserve: cleanCacheReserve
 	$(call clean_directory,dataReserve)
 
 reports/report_template.pdf: misc/report_template.Rmd
