@@ -15,13 +15,13 @@ clean:
 	$(call clean_directory,munge) ; \
 	$(call clean_directory,reports)
 
-cleanCacheReserve: clean
-	$(call clean_directory,cacheReserve)
-
-cleanDataReserve: cleanCacheReserve
+cleanReserve: clean
+	$(call clean_directory,cacheReserve) ; \
 	$(call clean_directory,dataReserve)
 
 reports/report_template.pdf: misc/report_template.Rmd
 	$(call knit_report)
 
-.PHONY: clean cleanReserve
+packages: misc/package_list.r 
+
+.PHONY: clean cleanReserve packages
