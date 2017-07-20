@@ -15,12 +15,12 @@ function `ProjectTemplate::load.project()`. So if, for example, an analysis
 produces a large dataset which isn't needed every step of the way, then time is
 wasted repeatedly re-loading it every time a script starts.
 
-I solved this by creating "Reserve" directories where data, cached data, and
+To solve this, we added "Reserve" directories where data, cached data, and
 munge scripts wait dormant. When we need, for example, a dataset, we symlink it
 from `dataReserve` into `data` before a script calls
-`ProjectTemplate::load.data()`.  The naming convention for these directories is
-to tack a "Reserve" on the end of the ProjectTemplate directory names. So, for
-example, `cacheReserve/` links to `cache/`.
+`ProjectTemplate::load.project()`.  The naming convention for these directories
+is to tack a "Reserve" on the end of the ProjectTemplate directory names. So,
+for example, `cacheReserve/` links to `cache/`.
 
 The `Makefile` controlls all of the symlinking through use of custom functions
 written in `functions.mk`. Example recipes that make use of these functions are
@@ -41,9 +41,9 @@ defined at the top of the `Makefile`.
 
 ## Making your own analysis
 
-Download this repository and rename the top level directory to the name of your
+Download this repository and rename the top-level directory to the name of your
 project. Change the `projname` variable at the top of the Makefile, to match
-the name of the directory containing the project. Also, change the `projname`
+the name of the top-level directory. Also, change the `projname`
 variable in `misc/example_munge.r`. This won't affect the functioning of the
 code when run in batch mode, but it's useful for running code interactively.
 
@@ -66,9 +66,9 @@ code when run in batch mode, but it's useful for running code interactively.
 
 ## Database access
 
-All analyses require a connection to the data warehouse. To set up this
-connection, a file containing database credentials, named `authenticate.csv`,
-must be provided to the Makefile, and the `auth_file` variable must be set so
-that the Makefile can find it. An example `authenticate.csv` file is provided
-as a template. For security reasons, I reccommend not storing
-`authenticate.csv` in your project directory.
+If an analysis requires a connection to a database, you can pass database
+credentials to the munge scripts by populating a row in the file
+`authenticate.csv` and setting the `auth_file` variable at the top of the
+Makefile. An example `authenticate.csv` file is provided as a template. For
+security reasons, I recommend not storing `authenticate.csv` in your project
+directory.
