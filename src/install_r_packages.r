@@ -1,4 +1,4 @@
-packages <- c("devtools", "knitr", "ezknitr", "rprojroot")
+packages <- c("devtools", "knitr", "ezknitr", "rprojroot", "ProjectTemplate")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
