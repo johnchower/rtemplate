@@ -10,7 +10,7 @@ include boilerplate.mk
 # Define variables and default goal (what runs when you say 'make')
 # ########
 
-auth_file := ~/.auth/authenticate.csv # Text file containing database credentials
+auth_file := ~/.auth/authenticate.csv # Path to text file containing database credentials
 sql_access := TRUE # Does the person running the code have access to the database?
 projname := rtemplate
 cache_loading := TRUE
